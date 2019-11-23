@@ -2,16 +2,15 @@
 
 # IMPORT MODULES
 
+import sys
 from cc_validation.luhn import isLuhnValid
 
 
 # DEFINE VARIABLES
 
-valid = "4556194895263730"
-invalid = "8556194895263730" 
+card_number = sys.argv[1]
 
 
 # BODY
 
-isLuhnValid(valid)
-isLuhnValid(invalid)
+isLuhnValid(card_number)
