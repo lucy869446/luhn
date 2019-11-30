@@ -51,21 +51,29 @@ def LuhnChecksum(card_number):
     return Checksum % 10
 
 
-def isLuhnValid(card_number):
+def isLuhnValid(card_number, verbosity):
 
     "Function to print the CC validation"
 
     """
     Args:
          card_number: string
+         verbosity: boolean
     """
 
-    if LuhnChecksum(card_number) == 0:
-        print((
-             "The number that was given as input: {} is a valid CC number")
-             .format(card_number))
+    if verbosity:
+        service_string = "The issuer is: "
+
+        if LuhnChecksum(card_number) == 0:
+            print((
+                 "The number that was given as input: {} is a valid CC number")
+                 .format(card_number))
+        else:
+            print((
+                 "The number that was given as input: {} \
+is not a valid CC number")
+                 .format(card_number))
     else:
-        print((
-             "The number that was given as input: {} is not a valid CC number")
-             .format(card_number))
-    print("The issuer is: {}".format(check_issuer(card_number)))
+        service_string = ""
+
+    print("{}{}".format(service_string, check_issuer(card_number)))
