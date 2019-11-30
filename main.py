@@ -7,6 +7,11 @@ import argparse
 from cc_validation.luhn import isLuhnValid
 
 
+# PARAMETERS
+
+default_datafile = 'data/cc_validation/cc_issuers.csv'
+
+
 # FUNCTIONS
 
 def arg_parsing():
@@ -34,4 +39,4 @@ def arg_parsing():
 # BODY
 
 card_number, verbosity = arg_parsing()
-isLuhnValid(card_number, verbosity)
+isLuhnValid(card_number, default_datafile, verbosity)

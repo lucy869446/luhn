@@ -2,26 +2,32 @@
 This file contains CC validation functions
 """
 
+import csv
 
-def check_issuer(card_number):
+
+def check_issuer(card_number, datafile):
 
     "Function to check CC issuer"
 
     """
-    List containing CC issuers
-
-    Col.1: start of range
-    Col.2: end of range
-    Col.3: service issuer
-
+    Args:
+        - card_number: string
+        - data_file: string
     """
 
-    iin_ranges = [
-        [340000, 379999, "American Express"],
-        [510000, 559999, "Mastercard"],
-        [560000, 599999, "Maestro"],
-        [400000, 499999, "Visa"]
-        ]
+    def parse_cc_issuers(datafile):
+        iin_ranges = []
+        with open(datafile, "r") as f:
+            csv_reader = csv.reader(f, delimiter=',')
+            next(csv_reader)
+            for row in csv_reader:
+                iin_ranges.append(row)
+        for i in range(len(iin_ranges)):
+            for j in range(2):
+                iin_ranges[i][j] = int(iin_ranges[i][j])
+        return iin_ranges
+
+    iin_ranges = parse_cc_issuers(datafile)
 
     iin = int(card_number[:6])
     for start, end, issuer in iin_ranges:
@@ -51,7 +57,7 @@ def LuhnChecksum(card_number):
     return Checksum % 10
 
 
-def isLuhnValid(card_number, verbosity):
+def isLuhnValid(card_number, datafile, verbosity):
 
     "Function to print the CC validation"
 
@@ -76,4 +82,4 @@ is not a valid CC number")
     else:
         service_string = ""
 
-    print("{}{}".format(service_string, check_issuer(card_number)))
+    print("{}{}".format(service_string, check_issuer(card_number, datafile)))
