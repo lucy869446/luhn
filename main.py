@@ -55,11 +55,14 @@ def call_dbmanager(username_for_login, username_to_be_added, password):
 # BODY
 
 mode, username_for_login, username_to_be_added, password, card_number, verbosity = arg_parsing()
-try:
-    exit_code = call_dbmanager(username_for_login, username_to_be_added, password)
-    if mode=='validate':
-        isLuhnValid(card_number, default_datafile, verbosity)
-    elif mode=='add':
-        print('New user added.')
-except Exception:
-    print('Error during database operation.')
+if mode != "test":
+    try:
+        exit_code = call_dbmanager(username_for_login, username_to_be_added, password)
+        if mode=='validate':
+            isLuhnValid(card_number, default_datafile, verbosity)
+        elif mode=='add':
+            print('New user added.')
+    except Exception:
+        print('Error during database operation.')
+else:
+    isLuhnValid(card_number, default_datafile, verbosity)
