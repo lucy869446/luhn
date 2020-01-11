@@ -2,14 +2,13 @@
 
 # IMPORT MODULES
 
-import sys, argparse, subprocess
+import sys, argparse, subprocess, os
 from cc_validation.luhn import isLuhnValid
 
 
 # PARAMETERS
 
 default_datafile = 'data/cc_validation/cc_issuers.csv'
-
 
 # FUNCTIONS
 
@@ -43,10 +42,11 @@ def arg_parsing():
     return mode, username_for_login, username_to_be_added, password, card_number, verbosity
 
 def call_dbmanager(username_for_login, username_to_be_added, password):
+    abs_path = os.path.dirname(os.path.realpath(__file__)) + "/scripts/dbmanager.py"
     if mode=='add' and username_to_be_added!=None and password!=None:
-        exit_code=subprocess.check_output(["python /home/seed/luhn/scripts/dbmanager.py -a {} -p {}".format(username_to_be_added,password)], shell=True)
+        exit_code=subprocess.check_output(["python " + abs_path + " -a {} -p {}".format(username_to_be_added,password)], shell=True)
     elif mode=='validate' and username_for_login!=None and password!=None:
-         exit_code=subprocess.check_output(["python /home/seed/luhn/scripts/dbmanager.py -u {} -p {}".format(username_for_login,password)], shell=True)
+         exit_code=subprocess.check_output(["python " + abs_path + " -u {} -p {}".format(username_for_login,password)], shell=True)
     else:
         exit_code=1
     return exit_code
