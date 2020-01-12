@@ -1,44 +1,37 @@
-import unittest
-import os
-import shutil
-
+import unittest, os, sys
+sys.path.insert(0,os.path.abspath('../cc_validation'))
+from luhn import digits_of, LuhnChecksum, check_issuer
 
 class TestMain(unittest.TestCase):
 
     def setUp(self):
-        self.path = os.path.dirname(os.path.realpath(__file__))
-        if os.path.exists(self.path+'/tmp'):
-            shutil.rmtree(self.path+"/tmp")
-        os.mkdir(self.path+'/tmp/')
         self.issuers = [
-                        [340000, 379999, "American Express"],
-                        [510000, 559999, "Mastercard"],
-                        [560000, 599999, "Maestro"],
-                        [400000, 499999, "Visa"]
+                        [340000, "American Express"],
+                        [510000, "Mastercard"],
+                        [560000, "Maestro"],
+                        [400000, "Visa"],
+                        [000000, "unknown"]
                        ]
 
-    def test_valid_entries(self):
-        for issuer_data in self.issuers:
-            issuer = issuer_data[2]
-            start = issuer_data[0]
-            stop = issuer_data[1]+1
-            for cn in range(start, stop, 1000):
-                tmp_file = "{}/tmp/tmp.txt".format(self.path)
-                os.system("python main.py test -cn {} > {}".format(cn,
-                          tmp_file))
-                with open(tmp_file) as f:
-                    read_issuer = f.read().replace('\n', '')
-                    self.assertEqual(read_issuer, issuer)
+    def test_digits_of(self):
+        string = "0123456789012345"
+        output = digits_of(string)
+        expected_output = [0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5]
+        self.assertEqual(output, expected_output)
 
-    def test_invalid_entries(self):
-        for start, stop in [[380000, 400000], [500000, 510000]]:
-            for cn in range(start, stop, 1000):
-                tmp_file = "{}/tmp/tmp.txt".format(self.path)
-                os.system("python main.py test -cn {} > {}".format(cn,
-                          tmp_file))
-                with open(tmp_file) as f:
-                    read_issuer = f.read().replace('\n', '')
-                    self.assertEqual(read_issuer, 'unknown')
+    def test_LuhnChecksum(self):
+        output = LuhnChecksum("0123456789012345")
+        expected_output = 8
+        self.assertEqual(output,expected_output)
+
+    def test_check_issuer(self):
+        datafile = os.path.abspath('../data/cc_validation/cc_issuers.csv')
+        outputs, expected_outputs = [], []
+        for row in self.issuers:
+            card_number = str(row[0])
+            outputs.append(check_issuer(card_number, datafile))
+            expected_outputs.append(row[1])
+        self.assertEqual(outputs,expected_outputs)
 
     def tearDown(self):
-        shutil.rmtree(self.path+"/tmp")
+        pass
