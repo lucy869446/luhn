@@ -7,7 +7,7 @@ import sqlite3
 from sqlite3 import Error
 import sys
 import hashlib
-import random 
+import random
 
 
 # PARAMETERS
@@ -69,7 +69,8 @@ def password_db_connection(path):
     try:
         curs.execute('SELECT count(username) FROM password')
     except Error:
-        curs.execute('CREATE TABLE password (username CHAR(256),password CHAR(256));')
+        curs.execute('CREATE TABLE password (username CHAR(256),\
+password CHAR(256));')
         conn.commit()
         print('Password table created.')
 
@@ -94,29 +95,38 @@ exit_code = ''
 
 username_for_login, username_to_be_added, password = arg_parsing()
 
-if (username_for_login == None and username_to_be_added == None) or (password == None):
+if (username_for_login is None and
+        username_to_be_added is None) or (password is None):
     print('Missing arguments.')
 else:
     user_conn, user_curs = user_db_connection(path)
     pwd_conn, pwd_curs = password_db_connection(path)
-    if username_for_login != None:
-        user_curs.execute('SELECT salt FROM user WHERE (username="{}");'.format(username_for_login))
+    if username_for_login is not None:
+        user_curs.execute('SELECT salt FROM user \
+WHERE (username="{}");'.format(username_for_login))
         salt = user_curs.fetchall()[0][0]
         if len(salt) > 0:
             salt = float(salt)
             hashed_pwd = hash_password(password, salt)
-            pwd_curs.execute('SELECT count(*) FROM password WHERE (username="{}" AND password="{}");'.format(username_for_login, hashed_pwd))
+            pwd_curs.execute('SELECT count(*)\
+FROM password WHERE (username="{}"\
+AND password="{}");'.format(username_for_login, hashed_pwd))
             if int(pwd_curs.fetchall()[0][0]) > 0:
                 exit_code = 0
     else:
-        user_curs.execute('SELECT count(*) FROM user WHERE (username="{}");'.format(username_to_be_added))
+        user_curs.execute('SELECT count(*)\
+FROM user WHERE (username="{}");'.format(username_to_be_added))
         user_exists = user_curs.fetchall()[0][0]
         if user_exists == 0:
             salt = str(random.random())
-            user_curs.execute('INSERT INTO user (username, salt) VALUES("{}", "{}");'.format(username_to_be_added, salt))
+            user_curs.execute('\
+INSERT INTO user (username, salt) VALUES("{}", "{}");\
+'.format(username_to_be_added, salt))
             user_conn.commit()
             hashed_pwd = hash_password(password, salt)
-            pwd_curs.execute('INSERT INTO password (username, password) VALUES("{}", "{}");'.format(username_to_be_added, hashed_pwd))
+            pwd_curs.execute('\
+INSERT INTO password (username, password) VALUES("{}", "{}");\
+'.format(username_to_be_added, hashed_pwd))
             pwd_conn.commit()
             exit_code = 0
         else:
