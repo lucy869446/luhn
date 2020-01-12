@@ -1,3 +1,5 @@
+"Utility to create the csv file with the list of CC issuers."
+
 import csv
 
 cc_issuers = [

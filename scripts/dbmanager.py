@@ -1,5 +1,4 @@
-# FUNCTIONS
-# /usr/bin/env python3
+" This file contains the functions to manage the database of users."
 
 # IMPORT MODULES
 
@@ -19,6 +18,7 @@ path = r"/home/seed/luhn_db"  # Important: use absolute path to db.
 # FUNCTIONS
 
 def arg_parsing():
+
     "Function to parse arguments of main.py"
 
     parser = argparse.ArgumentParser()
@@ -34,15 +34,20 @@ def arg_parsing():
 
 
 def create_connection(db_file):
+
     "Create a database connection to a SQLite database."
+
     conn = None
     conn = sqlite3.connect(db_file)
     curs = conn.cursor()
+
     return conn, curs
 
 
 def user_db_connection(path):
+
     "Connect to user db and do operations."
+
     db_file = path + "/user.db"
     conn, curs = create_connection(db_file)
     try:
@@ -51,11 +56,14 @@ def user_db_connection(path):
         curs.execute('CREATE TABLE user (username CHAR(256), salt CHAR(256));')
         conn.commit()
         print('User table created.')
+
     return conn, curs
 
 
 def password_db_connection(path):
+
     "Connect to password db and do operations."
+
     db_file = path + "/password.db"
     conn, curs = create_connection(db_file)
     try:
@@ -64,14 +72,18 @@ def password_db_connection(path):
         curs.execute('CREATE TABLE password (username CHAR(256),password CHAR(256));')
         conn.commit()
         print('Password table created.')
+
     return conn, curs
 
 
 def hash_password(password, salt):
+
     "Hash the password."
+
     digest = str(salt) + password
     for i in range(1000):
         digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
+
     return digest
 
 

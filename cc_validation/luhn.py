@@ -1,6 +1,4 @@
-"""
-This file contains CC validation functions
-"""
+"This file contains CC validation functions"
 
 import csv
 
@@ -16,6 +14,9 @@ def check_issuer(card_number, datafile):
     """
 
     def parse_cc_issuers(datafile):
+
+        "Function to parse cc issuers from the file"
+
         iin_ranges = []
         with open(datafile, "r") as f:
             csv_reader = csv.reader(f, delimiter=',')

@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+"Main file to run."
 
 # IMPORT MODULES
 
@@ -10,12 +10,17 @@ from cc_validation.luhn import isLuhnValid
 
 default_datafile = 'data/cc_validation/cc_issuers.csv'
 
+
 # FUNCTIONS
 
 def arg_parsing():
+
     "Function to parse arguments of main.py"
 
     def str2bool(v):
+
+        "Function to convert a string to a boolean."
+
         if isinstance(v, bool):
             return v
         if v.lower() in ('yes', 'true', 't', 'y', '1'):
@@ -39,16 +44,23 @@ def arg_parsing():
     password = args.p
     card_number = args.cn
     verbosity = args.v
+
     return mode, username_for_login, username_to_be_added, password, card_number, verbosity
 
+
 def call_dbmanager(username_for_login, username_to_be_added, password):
+
+    "Database managing function."
+
     abs_path = os.path.dirname(os.path.realpath(__file__)) + "/scripts/dbmanager.py"
+
     if mode=='add' and username_to_be_added!=None and password!=None:
         exit_code=subprocess.check_output(["python " + abs_path + " -a {} -p {}".format(username_to_be_added,password)], shell=True)
     elif mode=='validate' and username_for_login!=None and password!=None:
          exit_code=subprocess.check_output(["python " + abs_path + " -u {} -p {}".format(username_for_login,password)], shell=True)
     else:
         exit_code=1
+
     return exit_code
 
 
